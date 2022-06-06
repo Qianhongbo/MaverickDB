@@ -1,0 +1,34 @@
+{
+  "tests": [
+    {
+      "name": "Compile test",
+      "setup": "make",
+      "run": "./final Compile",
+      "input": "",
+      "output": "Compile test PASS",
+      "comparison": "included",
+      "timeout": 10,
+      "points": 10
+    },
+    {
+      "name": "AddColumn test",
+      "setup": "make",
+      "run": "./final AddColumn",
+      "input": "",
+      "output": "AddColumn test PASS",
+      "comparison": "included",
+      "timeout": 5,
+      "points": 45
+    },
+    {
+      "name": "RemoveColumn test",
+      "setup": "make",
+      "run": "./final RemoveColumn",
+      "input": "",
+      "output": "RemoveColumn test PASS",
+      "comparison": "included",
+      "timeout": 5,
+      "points": 45
+    }
+  ]
+}
