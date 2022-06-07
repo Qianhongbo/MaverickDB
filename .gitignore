@@ -1,0 +1,9 @@
+# Ignore all
+*
+# Unignore all with extensions
+!*.*
+
+.vscode
+/build
+*.o
+*.txt

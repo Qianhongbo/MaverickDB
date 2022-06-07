@@ -12,7 +12,7 @@ namespace ECE141 {
   
   class AboutMe {
   public:
-    AboutMe() : name(""), pid("") {} 
+    AboutMe() : name("Hongbo Qian"), pid("A59010010") {} 
     
     const std::string& getPID() const {return pid;}
     const std::string& getName() const {return name;}
