@@ -1,0 +1,10 @@
+drop database foo;
+create database foo;
+use foo;
+CREATE TABLE Books ( id int NOT NULL auto_increment primary key, title varchar(25) NOT NULL, subtitle varchar(25), user_id int);
+INSERT INTO Books (title, subtitle, user_id) VALUES ("love","Maverick",5901), ("happy","promise",5902);
+ALTER TABLE Books ADD pub_year int;
+describe Books;
+select * from Books;
+ALTER TABLE Books DROP subtitle;
+describe Books;

@@ -6,4 +6,3 @@
 .vscode
 /build
 *.o
-*.txt
