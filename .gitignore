@@ -3,6 +3,5 @@
 # Unignore all with extensions
 !*.*
 
-.vscode
 /build
 *.o
