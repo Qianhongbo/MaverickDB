@@ -25,27 +25,6 @@
 #include "Timer.hpp"
 #include "ScriptRunner.hpp"
 
-void showErrors(ECE141::StatusResult &aResult, std::ostream &anOutput) {
-  
-  static std::map<ECE141::Errors, std::string> theMessages = {
-    {ECE141::illegalIdentifier, "Illegal identifier"},
-    {ECE141::unknownIdentifier, "Unknown identifier"},
-    {ECE141::databaseExists, "Database exists"},
-    {ECE141::tableExists, "Table Exists"},
-    {ECE141::syntaxError, "Syntax Error"},
-    {ECE141::unknownCommand, "Unknown command"},
-    {ECE141::unknownDatabase,"Unknown database"},
-    {ECE141::unknownTable,   "Unknown table"},
-    {ECE141::unknownError,   "Unknown error"}
-  };
-
-  std::string theMessage="Unknown Error";
-  if(theMessages.count(aResult.error)) {
-    theMessage=theMessages[aResult.error];
-  }
-  anOutput << "Error (" << aResult.error << ") " << theMessage << "\n";
-}
-
 namespace ECE141 {
   
   using StringMap = std::map<std::string, std::string>;
