@@ -70,7 +70,7 @@ class Database {
   Index         eIndex;
   IndexMap      indexes;
   Index         iIndex;
-  bpt::bplus_tree    bptree; 
+  // bpt::bplus_tree    bptree; 
 };
 }  // namespace ECE141
 #endif /* Database_hpp */

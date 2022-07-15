@@ -1076,22 +1076,24 @@ namespace ECE141 {
     
     bool doAddColumnTest() {
       std::stringstream theStream1;
-      theStream1 << "create database finalA;\n";
-      theStream1 << "create database finalB;\n";
-      theStream1 << "use finalA;\n";
+      std::string theDBName1(getRandomDBName('I'));
+      std::string theDBName2(getRandomDBName('I'));
+      theStream1 << "create database " << theDBName1 << ";\n";
+      theStream1 << "create database " << theDBName2 << ";\n";
+      theStream1 << "use " << theDBName1 <<";\n";
       
       addBooksTable(theStream1);
       insertBooks(theStream1,0,14);
       theStream1 << "describe Books;\n";
       theStream1 << "ALTER TABLE Books add pub_year int;\n";
 
-      theStream1 << "use finalB;\n";
-      theStream1 << "drop database finalB;\n";
-      theStream1 << "use finalA;\n";
+      theStream1 << "use " << theDBName2 << ";\n";
+      theStream1 << "drop database " << theDBName2 << ";\n";
+      theStream1 << "use " << theDBName1 << ";\n";
       theStream1 << "UPDATE Books set pub_year=2022 where id<8;\n";
       theStream1 << "describe Books;\n";
       theStream1 << "select * from Books where id<8 order by title;\n";
-      theStream1 << "drop database finalA;\n";
+      theStream1 << "drop database " << theDBName1 << ";\n";
       theStream1 << "quit;\n";
       
       std::stringstream theInput(theStream1.str());
@@ -1123,21 +1125,23 @@ namespace ECE141 {
     
     bool doRemoveColumnTest() {
       std::stringstream theStream1;
-      theStream1 << "create database finalA;\n";
-      theStream1 << "create database finalB;\n";
-      theStream1 << "use finalA;\n";
-      
+      std::string theDBName1(getRandomDBName('N'));
+      std::string theDBName2(getRandomDBName('N'));
+      theStream1 << "create database " << theDBName1 << ";\n";
+      theStream1 << "create database " << theDBName2 << ";\n";
+      theStream1 << "use " << theDBName1 << ";\n";
+
       addBooksTable(theStream1);
       insertBooks(theStream1,0,14);
       theStream1 << "describe Books;\n";
       theStream1 << "ALTER TABLE Books drop subtitle;\n";
 
-      theStream1 << "use finalB;\n";
-      theStream1 << "drop database finalB;\n";
-      theStream1 << "use finalA;\n";
+      theStream1 << "use " << theDBName2 << ";\n";
+      theStream1 << "drop database " << theDBName2 << ";\n";
+      theStream1 << "use " << theDBName1 << ";\n";
       theStream1 << "describe Books;\n";
       theStream1 << "select * from Books where id<8 order by title;\n";
-      theStream1 << "drop database finalA;\n";
+      theStream1 << "drop database " << theDBName1 << ";\n";
       theStream1 << "quit;\n";
       
       std::stringstream theInput(theStream1.str());

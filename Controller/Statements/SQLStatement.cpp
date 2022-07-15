@@ -19,8 +19,7 @@ bool CreateTBStatement::recognizes(Tokenizer &aTokenizer) {
   const int kMinLength = 8;  // smallest # of tokens in create statement
   if (kMinLength <= aTokenizer.remaining()) {
     TokenSequencer theSeq(aTokenizer);
-    auto aList = {Keywords::create_kw, Keywords::table_kw};
-    if (theSeq.nextIs(aList).hasClosedParen().restart()) {
+    if (theSeq.nextIs({Keywords::create_kw, Keywords::table_kw})) {
       return true;
     }
   }
@@ -106,34 +105,31 @@ StatusResult ShowTBStatement::run(std::ostream &aStream) {
 
 // insert table statement
 bool InsertTBStatement::recognizes(Tokenizer &aTokenizer) {
-  bool flag = false;
   const int kMinLength = 10;  // smallest # of tokens in insert statement
   TokenSequencer theSeq(aTokenizer);
   if (kMinLength <= aTokenizer.remaining()) {
-    auto aList = {Keywords::insert_kw, Keywords::into_kw};
-    if (theSeq.nextIs(aList).hasClosedParen()) {
-      auto anoList = {Keywords::values_kw};
-      if (theSeq.skipPast(')').nextIs(anoList).hasClosedParen().restart())
-        flag = true;
+    if (theSeq.nextIs({Keywords::insert_kw, Keywords::into_kw})) {
+      return true;
     }
   }
-  theSeq.restart();
-  return flag;
+  return false;
 }
 
 StatusResult InsertTBStatement::parse(Tokenizer &aTokenizer) {
   TokenSequencer theSeq(aTokenizer);
   if (theSeq.skip(2).getIdentifier(name).skipPast(left_paren).parseIdentifierList(fieldList))
-    while (aTokenizer.more() && semicolon != aTokenizer.current().data[0]) {
-      StringList aStrList;
-      if (theSeq.skipPast(left_paren).parseValueList(aStrList))
-        valueList.push_back(aStrList);
-      else
-        return {syntaxError};
+    if (theSeq.nextIs({Keywords::values_kw})) {
+      while (aTokenizer.more() && semicolon != aTokenizer.current().data[0]) {
+        StringList aStrList;
+        if (theSeq.skipPast(left_paren).parseValueList(aStrList)) {
+          valueList.push_back(aStrList);
+        } else {
+          return {syntaxError};
+        }
+      }
+      return {};
     }
-  else
-    return {syntaxError};
-  return {};
+  return {syntaxError};
 }
 
 StatusResult InsertTBStatement::run(std::ostream &aStream) {
@@ -160,15 +156,12 @@ StatusResult InsertTBStatement::run(std::ostream &aStream) {
 // select table statement
 bool SelectStatement::recognizes(Tokenizer &aTokenizer) {
   TokenSequencer theSeq(aTokenizer);
-  bool flag = false;
   const int kMinLength = 4;  // smallest # of tokens in select statement
   if (kMinLength <= aTokenizer.remaining()) {
     if (theSeq.nextIs({Keywords::select_kw}))
-      if (aTokenizer.skipTo(Keywords::from_kw))
-        flag = true;
+      return true;
   }
-  theSeq.restart();
-  return flag;
+  return false;
 }
 
 StatusResult SelectStatement::parseWhereClause(Tokenizer &aTokenizer) {
@@ -237,23 +230,25 @@ StatusResult SelectStatement::parse(Tokenizer &aTokenizer) {
     query.setFieldList(aList);
   }
   // parse table name
-  aTokenizer.skipTo(Keywords::from_kw);
-  name = aTokenizer.peek(1).data;
-  query.setTableName(name);
-  aTokenizer.next(2);
-  // parse where, limit, orderby clause
-  while (theResult && aTokenizer.more() && semicolon != aTokenizer.current().data[0]) {
-    Keywords theKeyword = aTokenizer.current().keyword;
-    if (Keywords::where_kw == theKeyword) {
-      theResult = parseWhereClause(aTokenizer);
-    } else if (Keywords::limit_kw == theKeyword) {
-      theResult = parseLimitClause(aTokenizer);
-    } else if (Keywords::order_kw == theKeyword) {
-      theResult = parseOrderbyClause(aTokenizer);
-    } else if (in_array<Keywords>(gJoinTypes, theKeyword)) {
-      theResult = parseJoin(aTokenizer);
+  if (aTokenizer.skipTo(Keywords::from_kw)) {
+    name = aTokenizer.peek(1).data;
+    query.setTableName(name);
+    aTokenizer.next(2);
+    // parse where, limit, orderby clause
+    while (theResult && aTokenizer.more() && semicolon != aTokenizer.current().data[0]) {
+      Keywords theKeyword = aTokenizer.current().keyword;
+      if (Keywords::where_kw == theKeyword) {
+        theResult = parseWhereClause(aTokenizer);
+      } else if (Keywords::limit_kw == theKeyword) {
+        theResult = parseLimitClause(aTokenizer);
+      } else if (Keywords::order_kw == theKeyword) {
+        theResult = parseOrderbyClause(aTokenizer);
+      } else if (in_array<Keywords>(gJoinTypes, theKeyword)) {
+        theResult = parseJoin(aTokenizer);
+      }
     }
   }
+
   return theResult;
 }
 
@@ -265,15 +260,12 @@ StatusResult SelectStatement::run(std::ostream &aStream) {
 // * update statement
 // * UPDATE Users SET zipcode = 92127 WHERE zipcode>92100;
 bool UpdateStatement::recognizes(Tokenizer &aTokenizer) {
-  bool flag = false;
   const int kMinLength = 10;  // smallest # of tokens in insert statement
   TokenSequencer theSeq(aTokenizer);
   if (kMinLength <= aTokenizer.remaining())
-    if (theSeq.nextIs({Keywords::update_kw}).skip(2).nextIs({Keywords::set_kw}))
-      if (aTokenizer.skipTo(Keywords::where_kw))
-        flag = true;
-  theSeq.restart();
-  return flag;
+    if (theSeq.nextIs({Keywords::update_kw}))
+      return true;
+  return false;
 }
 
 StatusResult UpdateStatement::parse(Tokenizer &aTokenizer) {
@@ -282,10 +274,12 @@ StatusResult UpdateStatement::parse(Tokenizer &aTokenizer) {
   theSeq.skip(1);
   name = aTokenizer.current().data;
   query.setTableName(name);
-  theSeq.skip(2);
-  Entity *theEntity = database->getEntity(name);
-  theSeq.parseAssignment(map, theEntity);
-  theResult = parseWhereClause(aTokenizer);
+  if (theSeq.skip(1).nextIs({Keywords::set_kw})) {
+    theSeq.skip(1);
+    Entity *theEntity = database->getEntity(name);
+    theSeq.parseAssignment(map, theEntity);
+    theResult = parseWhereClause(aTokenizer);
+  }
   return theResult;
 }
 
@@ -297,24 +291,25 @@ StatusResult UpdateStatement::run(std::ostream &aStream) {
 // * delete statement
 // * DELETE from Users where zipcode>92124;
 bool DeleteStatement::recognizes(Tokenizer &aTokenizer) {
-  bool flag = false;
   const int kMinLength = 7;  // smallest # of tokens in insert statement
   TokenSequencer theSeq(aTokenizer);
   if (kMinLength <= aTokenizer.remaining())
-    if (theSeq.nextIs({Keywords::delete_kw, Keywords::from_kw}))
-      if (aTokenizer.skipTo(Keywords::where_kw))
-        flag = true;
-  theSeq.restart();
-  return flag;
+    if (theSeq.nextIs({Keywords::delete_kw, Keywords::from_kw})) {
+      return true;
+    }
+  return false;
 }
 
 StatusResult DeleteStatement::parse(Tokenizer &aTokenizer) {
   StatusResult theResult;
-  aTokenizer.next(2);
+  TokenSequencer theSeq(aTokenizer);
+  theSeq.skip(2);
   name = aTokenizer.current().data;
   query.setTableName(name);
-  aTokenizer.next(1);
-  theResult = parseWhereClause(aTokenizer);
+  if (theSeq.skip(1).nextIs({Keywords::where_kw})) {
+    theSeq.skip(1);
+    theResult = parseWhereClause(aTokenizer);
+  }
   return theResult;
 }
 
@@ -381,7 +376,6 @@ bool AlterStatement::recognizes(Tokenizer &aTokenizer) {
   if (kMinLength <= aTokenizer.remaining()) {
     TokenSequencer theSeq(aTokenizer);
     if (theSeq.nextIs({Keywords::alter_kw, Keywords::table_kw})) {
-      theSeq.restart();
       return true;
     }
   }
@@ -391,7 +385,7 @@ bool AlterStatement::recognizes(Tokenizer &aTokenizer) {
 StatusResult AlterStatement::parse(Tokenizer &aTokenizer) {
   aTokenizer.next(2);
   name = aTokenizer.current().data;  // get tablename
-  
+
   aTokenizer.next();
   // validate the keyword add and drop
   Keywords theKeyword = aTokenizer.current().keyword;

@@ -11,7 +11,7 @@
       "program": "${workspaceFolder}/build/final",
       "args": [
         // "DBCommands"
-        "All"
+        // "All"
       ],
       "terminal": "integrated",
       // "stopOnEntry": true,

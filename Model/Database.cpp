@@ -30,8 +30,7 @@ Database::Database(const std::string& aName, CreateDB)
     : name(aName),
       storage(Config::getDBPath(aName), OpenNew),
       eIndex(storage, "M0", 0, 0, IndexType::strKey),
-      iIndex(storage, "M1", 1, 0, IndexType::strKey),
-      bptree("./data/db.bin", true) {
+      iIndex(storage, "M1", 1, 0, IndexType::strKey) {
   StorageInfo theInfo;
   std::stringstream theStream;
 
@@ -50,8 +49,7 @@ Database::Database(const std::string& aName, OpenDB)
     : name(aName),
       storage(Config::getDBPath(aName), OpenExisting),
       eIndex(storage, "M0", 0, 0, IndexType::strKey),
-      iIndex(storage, "M1", 1, 0, IndexType::strKey),
-      bptree("./data/db.bin", false) {
+      iIndex(storage, "M1", 1, 0, IndexType::strKey) {
 }
 
 StatusResult Database::loadEntityIndex() {

@@ -69,9 +69,7 @@ StatusResult Application::run(Statement *aStatement) {
 }
 
 StatusResult Application::runScript(const std::string &aName) {
-  // ! This folder path may need to be changed each project
-  std::string folderPath = "/Users/qianhongbo/Documents/Spring22/ECE141B/assignment/sp22-final-Qianhongbo/";
-  std::string thePath = folderPath + aName + ".txt";
+  std::string thePath = "../" + aName + ".txt"; // use final.txt file to run script
   auto theScripts = std::fstream(thePath, std::ios::in);
   ECE141::StatusResult theResult;
   std::string theCommand;
