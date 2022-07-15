@@ -10,7 +10,8 @@
       "request": "launch",
       "program": "${workspaceFolder}/build/final",
       "args": [
-        // "All"
+        // "DBCommands"
+        "All"
       ],
       "terminal": "integrated",
       // "stopOnEntry": true,

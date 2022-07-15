@@ -27,7 +27,7 @@ class ScriptRunner {
       std::stringstream theStream(theCommand);
       anOutput << theCommand << "\n";
       theResult = app.handleInput(theStream);
-      if (!theResult) {
+      if (!theResult && theResult.error != userTerminated) {
         showErrors(theResult, anOutput);
       }
     }

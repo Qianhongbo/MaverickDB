@@ -30,7 +30,8 @@ Database::Database(const std::string& aName, CreateDB)
     : name(aName),
       storage(Config::getDBPath(aName), OpenNew),
       eIndex(storage, "M0", 0, 0, IndexType::strKey),
-      iIndex(storage, "M1", 1, 0, IndexType::strKey) {
+      iIndex(storage, "M1", 1, 0, IndexType::strKey),
+      bptree("./data/db.bin", true) {
   StorageInfo theInfo;
   std::stringstream theStream;
 
@@ -49,7 +50,8 @@ Database::Database(const std::string& aName, OpenDB)
     : name(aName),
       storage(Config::getDBPath(aName), OpenExisting),
       eIndex(storage, "M0", 0, 0, IndexType::strKey),
-      iIndex(storage, "M1", 1, 0, IndexType::strKey) {
+      iIndex(storage, "M1", 1, 0, IndexType::strKey),
+      bptree("./data/db.bin", false) {
 }
 
 StatusResult Database::loadEntityIndex() {
@@ -318,6 +320,14 @@ StatusResult Database::insertRows(const ValueList& aValueList, std::string aName
     aRow->encode(theStream);
     StorageInfo theInfo(theHashVal, BlockType::data_block, 0, Helpers::getStreamSize(theStream));  // set the storage info
     if ((theResult = storage.save(theStream, theInfo))) {
+      // save the data to b+tree
+      // std::stringstream ss;
+      // std::visit(VWriter{ss}, thePrimaryKey);
+
+      // bpt::key_t theKey;
+      // std::string theStr = ss.str();
+      // strcpy(theKey.k, ss.str().c_str());
+      // bptree.insert(theKey, aRow->getDataCopy());
       // update the index
       if (Index* theIndex = getIndex(aName)) {
         theIndex->setKeyValue(thePrimaryKey, theInfo.start);

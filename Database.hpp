@@ -20,6 +20,9 @@
 #include "Row.hpp"
 #include "Storage.hpp"
 #include "keywords.hpp"
+#include "bpt.hpp"
+
+using namespace bpt;
 
 namespace ECE141 {
 
@@ -67,6 +70,7 @@ class Database {
   Index         eIndex;
   IndexMap      indexes;
   Index         iIndex;
+  bpt::bplus_tree    bptree; 
 };
 }  // namespace ECE141
 #endif /* Database_hpp */

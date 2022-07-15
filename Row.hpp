@@ -35,6 +35,7 @@ public:
   size_t      getEntityId();
   KeyValues&  getData();
   uint32_t    getBlockNumber();
+  KeyValues   getDataCopy() { return data; }
 
   virtual StatusResult  encode(std::ostream &anOutput) override;
   virtual StatusResult  decode(std::istream &anInput) override;

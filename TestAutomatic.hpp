@@ -164,7 +164,7 @@ namespace ECE141 {
       if(theResult) {
         const char* theLines[]={
           theInput.c_str(),
-          "Version 0.9", "Help system available",
+          "Version 1.0", "Help system available",
           "DB::141 is shutting down"
         };
         
@@ -1101,7 +1101,7 @@ namespace ECE141 {
       if(theResult) {
         std::string tempStr=theOutput.str();
         output << "output \n" << tempStr << "\n";
-        //std::cout << tempStr << "\n";
+        // std::cout << tempStr << "\n";
         
         Responses theResponses;
         size_t theCount=analyzeOutput(theOutput,theResponses);
