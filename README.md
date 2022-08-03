@@ -289,8 +289,6 @@ VALUES
 11 rows in set (0.00 sec)
 ```
 
-
-
 #### Update statement
 
 ```mysql
@@ -310,6 +308,12 @@ Query Ok. 1 rows affected (0.000023 sec)
 ```mysql
 ALTER TABLE Books add pub_year varchar(4);  
 Query Ok, 20 rows affected (0.00123 secs)
+```
+
+#### Run script statement
+
+```mysql
+run script test; # will run scripts of test.txt file in the root folder
 ```
 
 
