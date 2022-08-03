@@ -1,0 +1,23 @@
+title MaverickDB Diagram
+
+CMD->Application:User Input
+Application->Application:Tokenize
+Application->Processor:Token
+Processor->Statement:Recognize
+activate Statement
+Statement->Processor:Parse
+deactivate Statement
+Processor->Statement:Run
+Statement->Database:Run
+Database->Storage:Load
+Storage->Cache:Check
+Cache->(1)Storage:Found
+Cache->(1).db file: Not Found
+.db file->Cache:Add
+.db file->Storage:Blocks
+Storage->Database:Blocks
+Database->Database:Execute
+Database->Storage:Write back
+Storage->.db file:Write back
+Storage->Cache:Change
+Database->CMD:Output View
