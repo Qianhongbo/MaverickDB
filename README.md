@@ -313,7 +313,7 @@ Query Ok, 20 rows affected (0.00123 secs)
 #### Run script statement
 
 ```mysql
-run script test; # will run scripts of test.txt file in the root folder
+run script final; # will run scripts of final.txt file in the root folder
 ```
 
 
